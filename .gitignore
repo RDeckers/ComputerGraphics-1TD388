@@ -1,0 +1,7 @@
+*.exe
+*.creator
+*.includes
+*.user
+*.o
+*.files
+*.config
