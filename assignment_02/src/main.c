@@ -293,9 +293,10 @@ do{tick = SDL_GetTicks();
       // }else if(event.key.keysym.sym == SDLK_3){
       //   if(2 != currentProgram)
       //     currentProgram = 2;
-      // }else if(event.key.keysym.sym == SDLK_F11){
-      //   SDL_SetWindowFullscreen(win, fullscreen_mode ^= SDL_WINDOW_FULLSCREEN);
-      // }
+//       }else
+//    if(event.key.keysym.sym == SDLK_F11){
+//         SDL_SetWindowFullscreen(win, fullscreen_mode ^= SDL_WINDOW_FULLSCREEN);
+//       }
       break;
     }
   }
@@ -311,7 +312,7 @@ do{tick = SDL_GetTicks();
 report(INFO,"Shutting down all threads...");
 SDL_WaitThread(render_thread, NULL);
 report(INFO,"All threads joined");
-SDL_Quit();
+//SDL_Quit();
 }
 
 
