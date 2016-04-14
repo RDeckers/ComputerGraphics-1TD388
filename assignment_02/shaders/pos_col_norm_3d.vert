@@ -25,7 +25,7 @@ mat4 rotationMatrix(vec3 axis, float angle)
 void main()
 {
   float angle_z = 0.1;
-  gl_Position = rotationMatrix(vec3(0.0,1,0), angle_z)*vec4(a_position*0.5,1);
+  gl_Position = rotationMatrix(vec3(0.25,1,0.1), angle_z)*vec4(a_position*0.5,1);
   v_color = a_color;
   v_normal= a_normal;
 }

@@ -40,7 +40,14 @@ BINARIES := $(patsubst $(SRC_DIR)/%.c,$(BIN_DIR)/%,$(C_FILES))
 COMMON_C_FILES := $(wildcard $(SRC_DIR)/common/*.c)
 OBJ_FILES = $(patsubst $(SRC_DIR)/common/%.c,$(OBJ_DIR)/%.o,$(COMMON_C_FILES))
 
-LD_FLAGS += --std=gnu99 -march=native -lSDL2main -lSDL2 -lglu -lGLEW -lGL -lutilities -lm -L$(INSTALL_LIB_DIR)
+ifeq ($(OS),Windows_NT)
+	LD_FLAGS += -lmingw32 -lglew32 -lopengl32
+	C_FLAGS += -DGLEW_STATIC
+else
+	LD_FLAGS += -lGLEW -lGL
+endif
+
+LD_FLAGS += --std=gnu99 -march=native -lglu -lSDL2main -lSDL2 -lutilities -lm -L$(INSTALL_LIB_DIR)
 C_FLAGS += --std=gnu99 -O2 -pipe -march=native -I$(PROJECT_DIR)headers -I$(INSTALL_INCLUDE_DIR)
 
 .SECONDARY: $(OBJ_FILES)

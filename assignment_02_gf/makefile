@@ -12,6 +12,7 @@ FIX_PATH = $(subst /,\,$1)
 	INSTALL_BIN_DIR := Z:/bin/
 	INSTALL_INCLUDE_DIR := Z:/include/
 	LIB_SUFFIX =.dll
+	EXE_SUFFIX = .exe
 else
 	REPORT = @echo -e "\e[4;1;37m$1\033[0m"
 	CHK_DIR_EXISTS = test -d $1 || mkdir -p $1
@@ -22,23 +23,18 @@ else
 	INSTALL_BIN_DIR := ~/bin/
 	INSTALL_INCLUDE_DIR := ~/include/
 	LIB_SUFFIX :=.so
+	EXE_SUFFIX :=
 endif
 
 PROJECT_DIR :=$(dir $(realpath $(lastword $(MAKEFILE_LIST))))
 OBJ_DIR := $(PROJECT_DIR)obj
 BIN_DIR := $(PROJECT_DIR)bin
 SRC_DIR := $(PROJECT_DIR)/src
-# SCRIPT_DIR := $(PROJECT_DIR)/scripts
-# PLOTS_DIR := $(PROJECT_DIR)/plots
-# DATA_DIR := $(PROJECT_DIR)/data
+HEADERS_DIR := $(PROJECT_DIR)/headers
 
-# PLOTS_GNUPLOT := $(call rwildcard, $(PLOTS_DIR), *.gnuplot)
-# PLOTS_PNG := $(patsubst %.gnuplot, %.png, $(PLOTS_GNUPLOT))
-C_FILES := $(wildcard $(SRC_DIR)/*.c)
-BINARIES := $(patsubst $(SRC_DIR)/%.c,$(BIN_DIR)/%,$(C_FILES))
+CPP_FILES := $(wildcard $(SRC_DIR)/*.cpp)
 
-COMMON_C_FILES := $(wildcard $(SRC_DIR)/common/*.c)
-OBJ_FILES = $(patsubst $(SRC_DIR)/common/%.c,$(OBJ_DIR)/%.o,$(COMMON_C_FILES))
+OBJ_FILES = $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(CPP_FILES))
 
 ifeq ($(OS),Windows_NT)
 	LD_FLAGS +=  -lmingw32 -lglew32 -lopengl32
@@ -46,30 +42,28 @@ else
 	LD_FLAGS += -lGLEW -lGL
 endif
 
-LD_FLAGS += --std=gnu99 -march=native -lglu -lSDL2main -lSDL2 -lutilities -lm -L$(INSTALL_LIB_DIR)
-C_FLAGS += --std=gnu99 -O2 -pipe -march=native -I$(PROJECT_DIR)headers -I$(INSTALL_INCLUDE_DIR)
+LD_FLAGS +=  -L$(INSTALL_LIB_DIR) -lglu -lSDL2main -lSDL2 -lutilities -lm -lgameframe
+C_FLAGS += --std=c++14 -O2 -pipe -march=native -I$(PROJECT_DIR)headers -I$(INSTALL_INCLUDE_DIR)
+
+BINARIES = main
+COMMON_OBJ_FILES = $(filter-out $(addsuffix .o, $(addprefix $(OBJ_DIR)/, $(BINARIES))), $(OBJ_FILES))
+BINARIES_FULL = $(addprefix $(BIN_DIR)/, $(addsuffix $(EXE_SUFFIX), $(BINARIES)))
 
 .SECONDARY: $(OBJ_FILES)
 
-all : binaries
+all : $(BINARIES_FULL) $(COMMON_OBJ_FILES)
+	$(call REPORT, common obj = $(COMMON_OBJ_FILES))
 
-binaries: $(BINARIES)
-
-# plots: $(PLOTS_PNG)
-#
-# $(PLOTS_DIR)/%.png : $(DATA_DIR)/%.dat $(PLOTS_DIR)/%.gnuplot
-# 	$(call REPORT,Building $@)
-# 	gnuplot -e "output_file='$@';term_type='png'" -c "$(patsubst %.png,%.gnuplot,$@)"
-
-$(BIN_DIR)% : $(SRC_DIR)/%.c $(OBJ_FILES)
-	$(call REPORT,Building $@)
+$(BIN_DIR)%$(EXE_SUFFIX) : $(OBJ_DIR)%.o $(COMMON_OBJ_FILES)
+	$(call REPORT, common obj = $(COMMON_OBJ_FILES))
+	$(call REPORT,linking $@)
 	$(call CHK_DIR_EXISTS, $(dir $@))
-	gcc $(C_FLAGS) -o "$@" "$<" $(OBJ_FILES) $(LD_FLAGS)
+	g++ -o $@ $< $(COMMON_OBJ_FILES) $(LD_FLAGS)
 
-$(OBJ_DIR)/%.o: $(SRC_DIR)/common/%.c
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	$(call REPORT,Compiling $@)
 	$(call CHK_DIR_EXISTS, $(dir $@))
-	@gcc $(C_FLAGS) -o "$@" -c "$<"
+	g++ $(C_FLAGS) -o "$@" -c "$<"
 
 clean:
 	$(call REPORT,Cleaning...)
