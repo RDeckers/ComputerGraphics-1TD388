@@ -52,15 +52,18 @@ BINARIES_FULL = $(addprefix $(BIN_DIR)/, $(addsuffix $(EXE_SUFFIX), $(BINARIES))
 .SECONDARY: $(OBJ_FILES)
 
 all : $(BINARIES_FULL) $(COMMON_OBJ_FILES)
-	$(call REPORT, common obj = $(COMMON_OBJ_FILES))
 
 $(BIN_DIR)%$(EXE_SUFFIX) : $(OBJ_DIR)%.o $(COMMON_OBJ_FILES)
-	$(call REPORT, common obj = $(COMMON_OBJ_FILES))
 	$(call REPORT,linking $@)
 	$(call CHK_DIR_EXISTS, $(dir $@))
 	g++ -o $@ $< $(COMMON_OBJ_FILES) $(LD_FLAGS)
 
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp $(HEADERS_DIR)/%.hpp
+	$(call REPORT,Compiling $@)
+	$(call CHK_DIR_EXISTS, $(dir $@))
+	g++ $(C_FLAGS) -o "$@" -c "$<"
+
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp 
 	$(call REPORT,Compiling $@)
 	$(call CHK_DIR_EXISTS, $(dir $@))
 	g++ $(C_FLAGS) -o "$@" -c "$<"

@@ -1,11 +1,12 @@
 #include <gameframe.hpp>
 #include <GL/glew.h>
+#include <glm/gtx/rotate_vector.hpp>
 #include <SDL2/SDL.h>
 #include <glu.h>
 #include <utilities/logging.h>
 #include <utilities/file.h>
 #include <cube.hpp>
-#include <camera.hpp>
+#include <fixatedcamera.hpp>
 
 GLuint progamFromFilenames(const char* vertexShaderFile, const char *fragmentShaderFile){
   char *shader_log = NULL;
@@ -28,7 +29,6 @@ GLuint progamFromFilenames(const char* vertexShaderFile, const char *fragmentSha
   GLuint shaderProgram= glCreateProgram();
   glAttachShader(shaderProgram, fragment_shader);
   glAttachShader(shaderProgram, vertex_shader);
-  //glBindFragDataLocation(shaderProgram[0], 0, "frag_color");
   glLinkProgram(shaderProgram);
   return shaderProgram;
 }
@@ -42,7 +42,7 @@ class Game : public Gameframe{
   GLuint vao, vbo;
   GLuint program;
   Cube *cube;
-  Camera camera;
+  FixatedCamera *camera;
   double last_gametime = 0;
 public:
   Game(){}
@@ -54,33 +54,53 @@ protected:
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_BLEND);
     glEnable(GL_CULL_FACE);
-//    if(-1 == SDL_GL_SetSwapInterval(-1)){
-//      report(INFO,"Late tearing not supported!");
-//      if(-1== SDL_GL_SetSwapInterval(1)){
-//        report(WARN,"VSync not supported?!");
-//      }
-//    }
+    if(-1 == SDL_GL_SetSwapInterval(-1)){
+      report(INFO,"Late tearing not supported!");
+      if(-1== SDL_GL_SetSwapInterval(1)){
+        report(WARN,"VSync not supported?!");
+      }
+    }
     glClearColor(0.4,0.6,0.8,1.0);
     glEnable(GL_DEPTH_TEST);
 
     program = progamFromFilenames("../shaders/pos_col_norm_3d.vert", "../shaders/col_norm.frag");
     cube = new Cube();
     last_gametime = SDL_GetTicks();
-    camera.place(glm::vec3(0,0.5,1));
-    camera.look_at(glm::vec3(0,0,0));
+    camera = new FixatedCamera(glm::vec3(0,0,0), 0, 0, 1);
+    /*camera.place(glm::vec3(0,0.5,1));
+    camera.look_at(glm::vec3(0,0,0));*/
   }
 
   void draw(double gametime_ms){
     glUseProgram(program);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    camera.update();
+    camera->update();
     cube->draw();
   }
 
   int update(double gametime_ms){
     double tick_time = last_gametime - gametime_ms;
     last_gametime = gametime_ms;
-    cube->update(gametime_ms, tick_time);
+    const Uint8 *state = SDL_GetKeyboardState(NULL);
+    if (state[SDL_SCANCODE_A]) {
+        camera->rotate_yaw((float)tick_time*0.003f);
+    }
+    if (state[SDL_SCANCODE_D]) {
+        camera->rotate_yaw(-(float)tick_time*0.003f);
+    }
+    if (state[SDL_SCANCODE_W]) {
+      camera->rotate_pitch((float)tick_time*0.003f);
+    }
+    if (state[SDL_SCANCODE_S]) {
+      camera->rotate_pitch(-(float)tick_time*0.003f);
+    }
+    if (state[SDL_SCANCODE_Q]) {
+      camera->move_distance((float)tick_time*0.003f);
+    }
+    if (state[SDL_SCANCODE_E]) {
+        camera->move_distance(-(float)tick_time*0.003f);
+    }
+    cube->update(gametime_ms, 0);
     return 0;
   }
 
