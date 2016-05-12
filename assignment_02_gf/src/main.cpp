@@ -7,6 +7,7 @@
 #include <utilities/file.h>
 #include <cube.hpp>
 #include <fixatedcamera.hpp>
+#include <object.hpp>
 
 GLuint progamFromFilenames(const char* vertexShaderFile, const char *fragmentShaderFile){
   char *shader_log = NULL;
@@ -42,6 +43,7 @@ class Game : public Gameframe{
   GLuint vao, vbo;
   GLuint program;
   Cube *cube;
+  Object *object;
   FixatedCamera *camera;
   double last_gametime = 0;
 public:
@@ -64,9 +66,10 @@ protected:
     glEnable(GL_DEPTH_TEST);
 
     program = progamFromFilenames("../shaders/pos_col_norm_3d.vert", "../shaders/col_norm.frag");
-    cube = new Cube();
+    object = new Object("../objects/gargo.obj");
+    //cube = new Cube();
     last_gametime = SDL_GetTicks();
-    camera = new FixatedCamera(glm::vec3(0,0,0), 0, 0, 1);
+    camera = new FixatedCamera(glm::vec3(0,0,0), 0, 0, 3);
     /*camera.place(glm::vec3(0,0.5,1));
     camera.look_at(glm::vec3(0,0,0));*/
   }
@@ -75,7 +78,7 @@ protected:
     glUseProgram(program);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     camera->update();
-    cube->draw();
+    object->draw();
   }
 
   int update(double gametime_ms){
@@ -100,12 +103,13 @@ protected:
     if (state[SDL_SCANCODE_E]) {
         camera->move_distance(-(float)tick_time*0.003f);
     }
-    cube->update(gametime_ms, 0);
+    //cube->update(gametime_ms, 0);
     return 0;
   }
 
   void renderer_cleanup(){
-    delete cube;
+    delete object;
+    //delete cube;
   }
 };
 

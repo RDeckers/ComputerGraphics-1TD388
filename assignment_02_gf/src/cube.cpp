@@ -168,10 +168,7 @@ glm::mat4 Cube::model_matrix(){
 }
 
 void Cube::draw(){
-  if(m_has_changed){
-    //set the model matrix
-    glUniformMatrix4fv(0, 1, GL_FALSE, glm::value_ptr(this->model_matrix()));
-  }
+  glUniformMatrix4fv(0, 1, GL_FALSE, glm::value_ptr(this->model_matrix()));
   glBindVertexArray(m_vao);
   glDrawArrays(GL_TRIANGLES, 0, 6*6);
 }
