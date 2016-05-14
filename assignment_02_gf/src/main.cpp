@@ -66,7 +66,9 @@ protected:
     glEnable(GL_DEPTH_TEST);
 
     program = progamFromFilenames("../shaders/pos_col_norm_3d.vert", "../shaders/col_norm.frag");
-    object = new Object("../objects/gargo.obj");
+    glUseProgram(program);
+    glUniform3f(2, 0.7, 0.1, 0.1);
+    object = new Object("../objects/icosphere.obj");
     //cube = new Cube();
     last_gametime = SDL_GetTicks();
     camera = new FixatedCamera(glm::vec3(0,0,0), 0, 0, 3);

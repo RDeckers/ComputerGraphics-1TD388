@@ -41,6 +41,8 @@ public:
 
   void update(){
     glUniformMatrix4fv(1, 1, GL_FALSE, glm::value_ptr(this->pv_matrix()));
+    glm::vec3 eye_pos = get_position();
+    glUniform3f(3, eye_pos.x, eye_pos.y, eye_pos.z);
   }
 };
 
