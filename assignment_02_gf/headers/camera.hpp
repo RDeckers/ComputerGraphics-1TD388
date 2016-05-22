@@ -14,15 +14,15 @@ class Camera
   float m_near_clipping = 0.1f;
   float m_far_clipping = 100.0f;
   glm::mat4 m_projection_matrix;
-  
+
   void update_projection_matrix(){
-    m_projection_matrix =glm::perspective(m_fov, m_aspect_ratio, m_near_clipping, m_far_clipping);
+    m_projection_matrix = glm::perspective(m_fov, m_aspect_ratio, m_near_clipping, m_far_clipping);
   }
 
   glm::mat4 view_matrix(){
     return glm::lookAt(get_position(), get_gaze(), get_up());
   }
-  
+
   glm::mat4 projection_matrix(){
     return m_projection_matrix;
   }
@@ -42,7 +42,7 @@ public:
   void update(){
     glUniformMatrix4fv(1, 1, GL_FALSE, glm::value_ptr(this->pv_matrix()));
     glm::vec3 eye_pos = get_position();
-    glUniform3f(3, eye_pos.x, eye_pos.y, eye_pos.z);
+    glUniform3f(2, eye_pos.x, eye_pos.y, eye_pos.z);
   }
 };
 

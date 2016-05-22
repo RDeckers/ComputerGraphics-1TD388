@@ -42,7 +42,7 @@ else
 	LD_FLAGS += -lGLEW -lGL
 endif
 
-LD_FLAGS +=  -L$(INSTALL_LIB_DIR) -lglu -lSDL2main -lSDL2 -lutilities -lm -lgameframe
+LD_FLAGS +=  -L$(INSTALL_LIB_DIR) -lglu -lSDL2main -lSDL2 -lm -lgameframe -lutilities
 C_FLAGS += --std=c++14 -O2 -pipe -march=native -I$(PROJECT_DIR)headers -I$(INSTALL_INCLUDE_DIR)
 
 BINARIES = main

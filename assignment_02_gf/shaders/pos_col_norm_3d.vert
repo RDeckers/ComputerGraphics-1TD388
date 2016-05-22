@@ -11,11 +11,11 @@ layout(location = 1) in vec3 a_color;
 layout(location = 2) in vec3 a_normal;
 
 out vec3 v_normal;
-out vec3 v_position;
+out vec3 v_world_position;
 
 void main()
 {
   gl_Position = view_matrix*object_matrix*vec4(a_position,1);
-  v_position = (gl_Position/gl_Position.w).xyz;
-  v_normal= a_normal;
+  v_world_position = (object_matrix*vec4(a_position,1)).xyz;
+  v_normal= mat3(object_matrix)*a_normal;
 }
