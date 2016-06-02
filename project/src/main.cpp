@@ -10,6 +10,7 @@
 #include <fixatedcamera.hpp>
 #include <object.hpp>
 #include <screenquad.hpp>
+#include <glm/glm.hpp>
 
 GLuint progamFromFilenames(const char* vertexShaderFile, const char *fragmentShaderFile){
   char *shader_log = NULL;
@@ -75,16 +76,16 @@ protected:
         report(WARN,"VSync not supported?!");
       }
     }
-    glClearColor(0.4,0.6,0.8,1.0);
+    glClearColor(0,0,0,0);
     glEnable(GL_DEPTH_TEST);
 
-    program = progamFromFilenames("../shaders/pos_col_norm_3d.vert", "../shaders/col_norm.frag");
+    program = progamFromFilenames("../shaders/object_instance_to_G.vert", "../shaders/object_to_G.frag");
     screenquad_program = progamFromFilenames("../shaders/screenquad_passthrough.vert", "../shaders/screenquad.frag");
     glUseProgram(program);
     screen = new ScreenQuad(get_width(), get_height());
-    object = new Object("../objects/armadillo.obj");
+    object = new Object("../objects/teapot.obj");
     last_gametime = SDL_GetTicks();
-    camera = new FixatedCamera(glm::vec3(0,0,0), -0.2, 1.35, 1.5);
+    camera = new FixatedCamera(glm::vec3(0,0,0), 0, 0, 2);
     glUseProgram(screenquad_program);
     create_samples(128);
     glUniform3fv(4, 128, samples);

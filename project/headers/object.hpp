@@ -12,8 +12,11 @@ class Object
 {
   enum AttributeLocation {
     POSITION = 0,
+    COLOR = 1,
     NORMAL = 2,
+    MODEL_MATRIX = 3
   };
+  GLsizei m_instance_count = 1 << 8;
   GLuint m_vbo[2] = {0};
   GLuint m_vao = 0;
   std::vector<GLuint> m_indices;
@@ -22,7 +25,10 @@ class Object
   
   glm::vec3 m_scale = glm::vec3(1.0f);
   glm::vec3 m_translation = glm::vec3(0.0f);
-  glm::quat m_rotation;
+  //glm::quat m_rotation;
+  
+  std::vector<glm::mat4> m_model_matrices;// = glm::mat4(1);
+  std::vector<glm::vec4> m_colors;// = glm::vec4(1,0,0,16);
   
   glm::mat4 model_matrix();
   void compute_normals();

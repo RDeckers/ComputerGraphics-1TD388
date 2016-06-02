@@ -43,7 +43,7 @@ else
 endif
 
 LD_FLAGS +=  -L$(INSTALL_LIB_DIR) -lglu -lSDL2main -lSDL2 -lutilities -lm -lgameframe -lstdc++
-C_FLAGS += --std=c++14 -O2 -pipe -march=native -I$(PROJECT_DIR)headers -I$(INSTALL_INCLUDE_DIR)
+C_FLAGS += --std=c++14 -O2 -g -pipe -march=native -I$(PROJECT_DIR)headers -I$(INSTALL_INCLUDE_DIR)
 
 BINARIES = main
 COMMON_OBJ_FILES = $(filter-out $(addsuffix .o, $(addprefix $(OBJ_DIR)/, $(BINARIES))), $(OBJ_FILES))

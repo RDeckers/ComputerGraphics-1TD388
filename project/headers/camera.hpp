@@ -40,9 +40,9 @@ public:
   virtual glm::vec3 get_up(){return glm::vec3(0,1,0);}
 
   void update(){
-    glUniformMatrix4fv(1, 1, GL_FALSE, glm::value_ptr(this->pv_matrix()));
-    glm::vec3 eye_pos = get_position();
-    glUniform3f(2, eye_pos.x, eye_pos.y, eye_pos.z);
+    glUniformMatrix4fv(0, 1, GL_FALSE, glm::value_ptr(this->pv_matrix()));
+//    glm::vec3 eye_pos = get_position();
+//    glUniform3f(2, eye_pos.x, eye_pos.y, eye_pos.z);
   }
 };
 
