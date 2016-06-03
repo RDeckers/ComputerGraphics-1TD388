@@ -11,14 +11,16 @@ layout(location = 2) in vec3 a_normal;
 layout(location = 3) in mat4 a_object_matrix;
 
 out vec3 v_normal;
-out vec3 v_world_position;
+out vec3 v_position;
 out vec4 v_color_spec;
 
 void main()
 {
   vec4 world_pos = a_object_matrix*vec4(a_position,1);
-  gl_Position = u_view_matrix*world_pos;
-  v_world_position = world_pos.xyz;
+  vec4 view_pos = u_view_matrix*world_pos;
+  gl_Position = view_pos;
+  
+  v_position = view_pos.xyz;
   v_normal= mat3(a_object_matrix)*a_normal;
   v_color_spec = a_color_spec;
 }

@@ -19,6 +19,7 @@ class ScreenQuad
 public:
   ScreenQuad(GLuint width = 128, GLuint height = 128);
   ~ScreenQuad();
+  void bind_depth_texture(GLuint bindinding);
   void bind();
   void draw();
 };

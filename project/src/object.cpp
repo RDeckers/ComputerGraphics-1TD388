@@ -1,5 +1,6 @@
 #include <object.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/euler_angles.hpp>
 #include <string.h>
 #include <errno.h>
 #include <utilities/logging.h>
@@ -114,7 +115,7 @@ void Object::populate_gl_buffers(){
 }
 
 glm::mat4 Object::model_matrix(){
-  return glm::translate(m_translation)*/*glm::mat4_cast(m_rotation)*/glm::scale(m_scale);
+  return glm::translate(m_translation)*glm::yawPitchRoll(fast_rngf(0,6.28), fast_rngf(0,6.28), fast_rngf(0,6.28))*glm::scale(m_scale);
   //return glm::scale(glm::vec3(0.1f));
   //return glm::mat4();
 }
@@ -166,8 +167,8 @@ bool Object::load_file(const char *obj_file)
   // Compute normals
   this->compute_normals();
   for(unsigned u = 0; u < m_instance_count; u++){
-    m_model_matrices.push_back(glm::translate(glm::vec3(fast_rngf(-10, 10), fast_rngf(-10, 10), fast_rngf(-10, 10)))*glm::scale(glm::vec3(fast_rngf(0.1, 1))));
-    m_colors.push_back(glm::vec4(fast_rngf(0,1), fast_rngf(0,1), fast_rngf(0,1), fast_rngf(1,32)));
+    m_model_matrices.push_back(glm::translate(glm::vec3(fast_rngf(-3, 3), fast_rngf(-3, 3), fast_rngf(-3, 3)))*glm::yawPitchRoll(fast_rngf(0,6.28), fast_rngf(0,6.28), fast_rngf(0,6.28))*glm::scale(glm::vec3(fast_rngf(0.1, 1))));
+    m_colors.push_back(glm::vec4(fast_rngf(1,1), fast_rngf(1,1), fast_rngf(1,1), fast_rngf(1,32)));
   }
   this->populate_gl_buffers();
   // Display log message

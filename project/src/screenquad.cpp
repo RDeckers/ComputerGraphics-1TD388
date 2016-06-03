@@ -97,7 +97,7 @@ ScreenQuad::ScreenQuad(GLuint width, GLuint height)
   glBindTexture(GL_TEXTURE_2D, m_position_texture);
   if(GL_NO_ERROR != (error= glGetError()))
     report(FAIL, "glBindTexture: %s (%d)", glewGetErrorString(error), error);
-  glTexImage2D(GL_TEXTURE_2D, 0,GL_RGB32F, m_width, m_height, 0,GL_RGB, GL_FLOAT, 0);
+  glTexImage2D(GL_TEXTURE_2D, 0,GL_RGBA32F, m_width, m_height, 0,GL_RGBA, GL_FLOAT, 0);
   if(GL_NO_ERROR != (error= glGetError()))
     report(FAIL, "glTexImage2D: %s (%d)", glewGetErrorString(error), error);
   // Poor filtering. Needed !
@@ -110,6 +110,15 @@ ScreenQuad::ScreenQuad(GLuint width, GLuint height)
   glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, m_position_texture, 0);
   if(GL_NO_ERROR != (error= glGetError()))
     report(FAIL, "glFramebufferTexture: %s (%d)", glewGetErrorString(error), error);
+  
+//  glActiveTexture(GL_TEXTURE0 + 3);
+//  glGenTextures(1, &m_depth_texture);
+//  glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, m_width, m_height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
+//  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+//  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+//  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+//  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+//  glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, m_depth_texture, 0);
   
   GLenum DrawBuffers[] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2};
   glDrawBuffers(3, DrawBuffers);
@@ -133,16 +142,22 @@ void ScreenQuad::bind(){
   glViewport(0,0,m_width,m_height); 
 }
 
-void ScreenQuad::draw(){
-  glBindVertexArray(m_vao);
-  glUniform1i(0, 0);
-  glActiveTexture(GL_TEXTURE0 + 0);
-  glBindTexture(GL_TEXTURE_2D, m_color_spec_texture);
-  glUniform1i(1, 1);
-  glActiveTexture(GL_TEXTURE0 + 1);
-  glBindTexture(GL_TEXTURE_2D, m_normal_texture);
-  glUniform1i(2, 2);
+void ScreenQuad::bind_depth_texture(GLuint binding){
   glActiveTexture(GL_TEXTURE0 + 2);
   glBindTexture(GL_TEXTURE_2D, m_position_texture);
+  glUniform1i(binding, 2);
+}
+
+void ScreenQuad::draw(){
+  glBindVertexArray(m_vao);
+//  glUniform1i(0, 0);
+//  glActiveTexture(GL_TEXTURE0 + 0);
+//  glBindTexture(GL_TEXTURE_2D, m_color_spec_texture);
+//  glUniform1i(1, 1);
+//  glActiveTexture(GL_TEXTURE0 + 1);
+//  glBindTexture(GL_TEXTURE_2D, m_normal_texture);
+//  glUniform1i(2, 2);
+//  glActiveTexture(GL_TEXTURE0 + 2);
+//  glBindTexture(GL_TEXTURE_2D, m_position_texture);
   glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 }
