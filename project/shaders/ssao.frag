@@ -5,13 +5,16 @@ layout(location = 0) out float o_occlusion;
 
 layout(location = 0) uniform sampler2D u_position_buffer;
 layout(location = 1) uniform sampler2D u_normal_buffer;
-layout(location = 2) uniform float u_radius = 0.05;//vase this off of view-space depth?
-layout(location = 3) uniform int u_sample_count = 64;
-layout(location = 4) uniform mat4 u_projection_matrix;
-layout(location = 5) uniform vec3 u_rotations[4] = {vec3(1,0,0), vec3(0,1,0), vec3(0,0,1), vec3(0,0,0)};
+layout(location = 2) uniform float u_radius = 0.1;//vase this off of view-space depth?
+layout(location = 3) uniform int u_sample_count = 1;
+layout(location = 4) uniform float u_occlusion_power = 1;
+layout(location = 5) uniform float u_mode = 1;
+layout(location = 6) uniform mat4 u_projection_matrix;
+
+layout(location = 10) uniform vec3 u_rotations[4] = {vec3(1,0,0), vec3(0,1,0), vec3(0,0,1), vec3(0,0,0)};
 
 
-uniform vec3 u_rays[128];
+uniform vec3 u_rays[512];
 
 in vec2 v_texCoord;
 
@@ -37,8 +40,8 @@ void main(void)
     vec3 ray = tbn*normalize(u_rays[i]);
     float scale = float(i) / float(u_sample_count);
     scale = mix(0.1f, 1.0f, scale * scale);
-    //float scale = 1;
-    ray *=  scale*radius;
+    //scale = 1;
+    ray *=  mix(scale, scale, u_mode)*radius;
     ray += position;
     // project sample position:
     vec4 sample_texel = vec4(ray, 1.0);
@@ -47,11 +50,11 @@ void main(void)
     sample_texel.xy = sample_texel.xy * 0.5 + 0.5;
     vec3 sampled_position = texture(u_position_buffer, sample_texel.xy).xyz;
     
-    //float rangeCheck = 1-smoothstep(0.0, 1.0, radius / length(position - sampled_position));
-    float rangeCheck= abs(position.z - sampled_position.z) < u_radius ? 1.0 : 0.0;
-    occlusion_count += (sampled_position.z > ray.z ? 1.0 : 0.0) * rangeCheck;    
+    float rangeCheck_a = smoothstep(0.0, 1.0, radius / abs(position.z - sampled_position.z));
+    float rangeCheck_b = abs(position.z - sampled_position.z) < u_radius ? 1.0 : 0.0;
+    occlusion_count += (sampled_position.z > ray.z ? 1.0 : 0.0) * mix(rangeCheck_a, rangeCheck_b, u_mode);    
   }
-  o_occlusion = pow(1-occlusion_count/float(u_sample_count),3);
+  o_occlusion = pow(1-occlusion_count/float(u_sample_count),u_occlusion_power);
   //o_frag_color.rgb = abs(random_shift);//u_projection_matrix*vec4(position,1);
 }
 
