@@ -38,10 +38,16 @@ public:
   virtual glm::vec3 get_position() =0;
   virtual glm::vec3 get_gaze() =0;
   virtual glm::vec3 get_up(){return glm::vec3(0,1,0);}
+  void bind_projection_matrix(GLuint binding){
+    glUniformMatrix4fv(binding, 1, GL_FALSE, glm::value_ptr(this->projection_matrix()));
+  }
+  void bind_view_matrix(GLuint binding){
+    glUniformMatrix4fv(binding, 1, GL_FALSE, glm::value_ptr(this->view_matrix()));
+  }
 
   void update(){
-    glUniformMatrix4fv(0, 1, GL_FALSE, glm::value_ptr(this->pv_matrix()));
-
+    glUniformMatrix4fv(0, 1, GL_FALSE, glm::value_ptr(this->view_matrix()));
+    glUniformMatrix4fv(1, 1, GL_FALSE, glm::value_ptr(this->projection_matrix()));
   }
 };
 

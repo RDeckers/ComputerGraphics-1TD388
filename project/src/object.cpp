@@ -168,7 +168,7 @@ bool Object::load_file(const char *obj_file)
   this->compute_normals();
   for(unsigned u = 0; u < m_instance_count; u++){
     m_model_matrices.push_back(glm::translate(glm::vec3(fast_rngf(-3, 3), fast_rngf(-3, 3), fast_rngf(-3, 3)))*glm::yawPitchRoll(fast_rngf(0,6.28), fast_rngf(0,6.28), fast_rngf(0,6.28))*glm::scale(glm::vec3(fast_rngf(0.1, 1))));
-    m_colors.push_back(glm::vec4(fast_rngf(1,1), fast_rngf(1,1), fast_rngf(1,1), fast_rngf(1,32)));
+    m_colors.push_back(glm::vec4(fast_rngf(0,1), fast_rngf(0,1), fast_rngf(0,1), fast_rngf(1,32)));
   }
   this->populate_gl_buffers();
   // Display log message

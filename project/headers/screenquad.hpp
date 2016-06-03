@@ -20,6 +20,8 @@ public:
   ScreenQuad(GLuint width = 128, GLuint height = 128);
   ~ScreenQuad();
   void bind_depth_texture(GLuint bindinding);
+  void bind_normal_texture(GLuint bindinding);
+  void bind_color_texture(GLuint binding);
   void bind();
   void draw();
 };

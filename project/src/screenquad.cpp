@@ -142,10 +142,22 @@ void ScreenQuad::bind(){
   glViewport(0,0,m_width,m_height); 
 }
 
+void ScreenQuad::bind_color_texture(GLuint binding){
+  glActiveTexture(GL_TEXTURE0 + 0);
+  glBindTexture(GL_TEXTURE_2D, m_color_spec_texture);
+  glUniform1i(binding, 0);
+}
+
 void ScreenQuad::bind_depth_texture(GLuint binding){
   glActiveTexture(GL_TEXTURE0 + 2);
   glBindTexture(GL_TEXTURE_2D, m_position_texture);
   glUniform1i(binding, 2);
+}
+
+void ScreenQuad::bind_normal_texture(GLuint binding){
+  glActiveTexture(GL_TEXTURE0 + 1);
+  glBindTexture(GL_TEXTURE_2D, m_normal_texture);
+  glUniform1i(binding, 1);
 }
 
 void ScreenQuad::draw(){
